@@ -1,36 +1,27 @@
 import React from "react";
 import PropTypes from "prop-types";
-import "./Navbar.css";
-import { AiFillSetting, AiOutlineBars } from "react-icons/ai";
+import { FaBars} from "react-icons/fa";
+import {Navbar} from "react-bootstrap"
+import { useAppContext } from "../../context/AppContext";
 
-function Navbar(props) {
-  const { saldo } = props;
+function NavbarComponent() {
+  const {state,setShowCat} = useAppContext();
   return (
-    <div>
-      <div className="navbar">
-        <div className="mobile-screen-left">
-          <AiOutlineBars className="nav-toogle" onClick={()=>props.toogle()} />
-          <h2>EXPER</h2>
-        </div>
-        <h2 className="saldo">
-          {" "}
-          Saldo:
-          <span className={saldo < 0 ? "negative" : "positive"}>
-            {" "}
-            {saldo}
-          </span>{" "}
-          zł{" "}
+    <Navbar className="bg-light ">
+          <FaBars className="nav-toogle" onClick={()=>setShowCat(e=>!e)} />
+        <Navbar.Text className="d-flex justify-content-center align-bottom w-100">
+        <h2>Saldo:
+          <span className={state?.saldo < 0 ? "text-danger p-1" : "text-success p-1"}>
+            {state?.saldo}
+          </span>
+          $
         </h2>
-        <button className="nav-settings">
-          <AiFillSetting className="nav-icon"  />
-        </button>
-      </div>
-    </div>
+        </Navbar.Text>
+    </Navbar>
   );
 }
-
-Navbar.propTypes = {
+NavbarComponent.propTypes = {
   saldo: PropTypes.number,
 };
 
-export default Navbar;
+export default NavbarComponent;

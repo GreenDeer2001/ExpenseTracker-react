@@ -1,13 +1,17 @@
 import React from "react";
+import { useAppContext } from "../../context/AppContext";
 import "./Categories.css";
 
-const Categories = (props) => {
-  const { categories, categoryHandler } = props;
+const Categories = () => {
+  const { categories,setCurrentCategory, showCat } = useAppContext();
 
+  const setCatHandler = (id) => {
+    categoryHandler(id);
+  };
 
-    const setCatHandler = (id) =>{
-        categoryHandler(id)
-    }
+  const categoryHandler = (cat) => {
+    setCurrentCategory(cat);
+  };
 
   const mapedCat = categories.map((category) => {
     return (
@@ -22,9 +26,9 @@ const Categories = (props) => {
   });
 
   return (
-    <div className={`categories-container `}>
+    <aside className={`categories-container ${!showCat && "closeAside"}`}>
       <ul className="categories-list">{mapedCat}</ul>
-    </div>
+    </aside>
   );
 };
 

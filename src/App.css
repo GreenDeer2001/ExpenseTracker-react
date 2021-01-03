@@ -1,46 +1,89 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
-
 * {
-  font-family: "Roboto", sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
+/* navbar */
 
-button {
+.nav-toogle {
+  margin-left: 0.7rem;
+  transform: scale(2);
   cursor: pointer;
-  background: transparent;
-  border: none;
+  transition: all 0.3s linear;
+}
+.nav-toogle:hover,
+.nav-toogle:active,
+.nav-toogle.focus {
+  transform: scale(2.2);
+  color: black;
 }
 
-svg {
-  vertical-align: baseline !important ;
+
+@media screen and (min-width: 882px){
+  .dashboard{
+    margin-left: 250px;
+}
+.nav-toogle{
+  display: none;
+}
 }
 
-@media(max-width:882px){
-  .category-column {
-    position: absolute;
-    z-index: 10000000;
-    top: 55px;
-    left: 0;
-    width: 40%;
-    left: -100%;
-    transition: left 0.5s linear;
+
+
+/* menu */
+
+.showTransationForm{
+  position: absolute;
+  cursor: pointer;
+  bottom: 5%;
+  right: 10%;
+  z-index: 100;
+}
+.menu-add-icon {
+  transition: opacity 0.3s linear;
+  transform: scale(4);
+}
+.menu-add-icon:hover,
+.menu-add-icon:active,
+.menu-add-icon:focus {
+  opacity: 0.6;
+}
+
+@media (min-width: 662px) {
+  .menu{
+    position: relative;
+  }
+  .showTransationForm{
+    top:35%;
+    right: 5%;
+    padding: 0.5rem 0.3rem;
+    margin: 0 0.5rem 1rem 0.5rem;
+    display: flex;
+    align-items: center;
   }
 }
 
-.category-column.toogle {
-  left: 0;
+
+/* history */
+
+
+.items {
+  padding: 2rem 0.5rem;
+}
+@media (min-width: 772px) {
+  .items {
+    padding: 2rem 1rem;
+  }
+}
+.item {
+  border-radius: 0.4rem;
+  border: 2px solid black;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  justify-content: space-between;
+  margin-top: 1rem;
 }
 
-@media (min-width: 882px) {
-  .app-center {
-    display: grid;
-    grid-template-columns: auto 1fr;
-  }
-
-  .category-column {
-    display: initial;
-    width: 100%;
-  }
+.item-icon {
+  font-size: 1.5rem;
 }

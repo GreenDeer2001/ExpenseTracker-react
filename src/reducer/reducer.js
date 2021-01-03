@@ -5,13 +5,26 @@ const Reducer = (state, action) => {
 
       return {
         ...state,
-        saldo: +((newSaldo).toFixed(2)),
+        saldo: +newSaldo.toFixed(2),
       };
     }
     case "ADD": {
       return {
         ...state,
         transations: state.transations.concat(action.transation),
+      };
+    }
+    case "REVENUE": {
+      return {
+        ...state,
+        revenue: action.revenue
+      };
+    }
+    case "EXPENSES": {
+      return {
+        ...state,
+        expenses: action.expenses
+
       };
     }
     case "REMOVE": {
@@ -28,8 +41,6 @@ const Reducer = (state, action) => {
       };
     }
     case "EDIT": {
-      console.log("wow");
-
       const updatedTransations = state.transations.map((tran) => {
         if (tran.id === action.obj.id) return action.obj;
         return tran;
@@ -53,23 +64,6 @@ const Reducer = (state, action) => {
         transations: updatedTransations,
       };
     }
-    case "CATEGORY": {
-      const updatedCat = state.categories.map((cat) => {
-        const newCat = cat;
-        if (cat.id !== action.catID) {
-          newCat.active = false;
-        } else {
-          newCat.active = true;
-        }
-
-        return newCat;
-      });
-      return {
-        ...state,
-        categories: updatedCat,
-      };
-    }
-
     default:
       return state;
   }

@@ -1,171 +1,134 @@
-import React from "react";
-import Backdrop from "../../UI/Backdrop/Backdrop";
-import Form from "react-bootstrap/Form";
-import "./AddTransation.css";
+import React, { useState, useRef } from "react";
+import { useAppContext } from "../../context/AppContext";
+import { setDate } from "./transationLogic";
+import { Form, Modal, Button } from "react-bootstrap";
 
-const setDate = () => {
-  let dateObj = new Date();
-  let month = String(dateObj.getMonth()+1).padStart(2, "0");
-  let day = String(dateObj.getDate()).padStart(2, "0");
-  let year = dateObj.getFullYear();
-  let output = year + "-" + month + "-" + day;
+const AddTransation = () => {
+  const [today, setTransationDate] = useState(setDate());
+  const [type, setType] = useState(true);
+  const {
+    categories: categoriesContext,
+    dispatch,
+    showForm,
+    setShowForm,
+  } = useAppContext();
 
-  return output;
-};
-
-const AddTransation = (props) => {
-  const [today, setTransationDate] = React.useState(setDate);
-  const [type, setType] = React.useState(true);
+  const title = useRef();
+  const amount = useRef();
+  const description = useRef();
+  const categoryRef = useRef();
+  const date = useRef();
+  const revBtn = useRef();
+  const expBtn = useRef();
 
   const formValidation = (e) => {
     e.preventDefault();
-
-    const title = document.getElementById("addTitle");
-    !validationHandler(title.value)
-      ? title.classList.add("notValid")
-      : title.classList.remove("notValid");
-    const amount = document.getElementById("amount");
-
-    !validationHandler(amount.value)
-      ? amount.classList.add("notValid")
-      : amount.classList.remove("notValid");
-
-    const description = document.getElementById("addDescription");
-    const category = document.getElementById("addCategory");
-    const date = document.getElementById("addData");
-
-    validationHandler(title.value) &&
-      validationHandler(amount.value) &&
-      props.addHandler({
-        title: title.value,
-        description: description.value,
-        category: +category.value,
-        date: date.value,
-        type: type,
-        amount: +amount.value,
-        id: Date.now(),
-      });
+    const obj = {
+      title: title.current.value,
+      description: description.current.value,
+      category: +categoryRef.current.value,
+      date: date.current.value,
+      type: type,
+      amount: +amount.current.value,
+      id: Date.now(),
+    };
+    dispatch({ type: "SALDO", amount: obj.type ? obj.amount : -obj.amount });
+    dispatch({ type: "ADD", transation: obj });
+    setShowForm(false);
   };
-  const validationHandler = (value) => {
-    value = value.trim();
-    if (
-      value === null ||
-      value === undefined ||
-      value === "" ||
-      value === " "
-    ) {
-      return false;
-    } else {
-      return true;
+
+  const categories = categoriesContext.map((category) => {
+    if (category.id !== 0) {
+      return (
+        <option key={category.id} value={category.id}>
+          {category.text}
+        </option>
+      );
     }
-  };
-
-  const changeDate = (newDate) => {
-    setTransationDate(newDate);
-  };
-
-  const switchBtnHandler = (e) => {
-    e.preventDefault();
-    document.getElementById("przychod").classList.remove("active");
-    document.getElementById("wydatek").classList.remove("active");
-
-    e.target.classList.add("active");
-
-    if (e.target.classList.contains("left")) {
-      setType(true);
-    } else {
-      setType(false);
-    }
-  };
-
-  const closeForm = (e)=>{
-    e.preventDefault()
-    props.closeForm();
-
-  }
-
-  const category = props.categories.map(category =>{
-    if(category.id !== 0){
-      return(
-        <option key={category.id} value={category.id}>{category.text}</option>)
-    }
-    return null
-  })
+    return null;
+  });
 
   return (
-    <React.Fragment>
-      <Backdrop close={props.closeForm} />
-      <div className="addTransation">
-        <Form className="bg-white  addForm rounded">
-        <button
-            id="closeForm"
-            className="text-danger"
-            type="submit"
-            onClick={(e) => closeForm(e)}
-          >
-            X
-          </button>
-          <Form.Control
-            size="lg"
-            type="text"
-            placeholder="Tytuł"
-            id="addTitle"
-          />
-          <br />
-          {/* <Form.Label>Opis</Form.Label> */}
-          <Form.Control id="addDescription" placeholder="opis" as="textarea" rows={3} />
-          <br />
-          <div className="button-switch-container">
-            <button
-              id="przychod"
-              onClick={(e) => switchBtnHandler(e)}
-              className="button-switch active left text-success"
-            >
-              Przychód
-            </button>
-            <button
-              id="wydatek"
-              onClick={(e) => switchBtnHandler(e)}
-              className="button-switch right text-danger"
-            >
-              Wydatek
-            </button>
-          </div>
-          <br />
-          <Form.Control
-            size="lg"
-            type="number"
-            placeholder="kwota(zł)"
-            id="amount"
-          />
-          <br />
-          <Form.Group controlId="addCategory">
-            <Form.Control as="select" size="lg" custom>
-            
-              {category}
-            </Form.Control>
-          </Form.Group>
+    <>
+      <Modal
+        show={showForm}
+        size="lg"
+        centered
+        onHide={() => setShowForm(false)}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Add Transation</Modal.Title>
+        </Modal.Header>
+        <Form onSubmit={formValidation}>
+          <Modal.Body>
+            <Form.Group>
+              <Form.Control
+                type="text"
+                size="lg"
+                placeholder="Title"
+                required
+                ref={title}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Control
+                as="textarea"
+                ref={description}
+                placeholder="Description"
+                rows={3}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Button
+                ref={revBtn}
+                variant={type ? "success" : "light"}
+                onClick={() => setType(true)}
+                className="border-success p-3 text-uppercase  w-50"
+              >
+                Revenue
+              </Button>
+              <Button
+                ref={expBtn}
+                variant={!type ? "danger" : "light"}
+                onClick={() => setType(false)}
+                className="border-danger p-3 text-uppercase  w-50"
+              >
+                Expenses
+              </Button>
+            </Form.Group>
+            <Form.Group>
+              <Form.Control
+                type="number"
+                size="lg"
+                placeholder="Amount"
+                required
+                ref={amount}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Control as="select" size="lg" ref={categoryRef} custom>
+                {categories}
+              </Form.Control>
+            </Form.Group>
 
-          <Form.Control
-            size="lg"
-            type="date"
-            value={today}
-            onChange={(e) => changeDate(e.target.value)}
-            id="addData"
-          />
-          <br />
-
-          <button
-            id="addBtn"
-            className="text-success"
-            type="submit"
-            onClick={(e) => formValidation(e)}
-          >
-            Potwierdz
-          </button>
+            <Form.Control
+              type="date"
+              value={today}
+              size="lg"
+              onChange={(e) => setTransationDate(e.target.value)}
+              ref={date}
+            />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="success" type="submit">
+              Submit
+            </Button>
+          </Modal.Footer>
         </Form>
-      </div>
-    </React.Fragment>
+      </Modal>
+    </>
   );
 };
 
